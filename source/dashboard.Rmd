@@ -1,0 +1,251 @@
+---
+title: "CLS Dashboard"
+author: "Shannon Coulter, SDCOE"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    social: menu
+    source_code: embed
+    theme: lumen
+editor_options: 
+  markdown: 
+    wrap: 80
+date: "`r format(Sys.time(), '%b %d, %Y')`"
+---
+
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(plotly)
+library(flexdashboard)
+library(here)
+library(shiny)
+library(crosstalk)
+library(ggthemes)
+library(htmltools)
+library(ggrepel)
+library(janitor)
+library(highcharter)
+library(dplyr)
+library(viridisLite)
+library(forecast)
+library(treemap)
+
+insight_pal <- c(
+  "darkred"    = "#571705",
+  "lightred"   = "#d93c02",
+  "darkgreen"  = "#455705",
+  "lightgreen" = "#7e9f09",
+  "darkpurple" = "#170577",
+  "darkblue"   = "#054557",
+  "darkgold"   = "#866407",
+  "lightgold"  = "#cf9a0b"
+)
+```
+
+
+```{r import-data}
+cls_results <- readRDS(here("data", "processed", "cls_clean.rds"))
+
+hcl <- farver::decode_colour(viridisLite::viridis(length(unique(cls_results$obj_3))), "rgb", "hcl")
+label_col <- ifelse(hcl[, "l"] > 50, "black", "white")
+```
+
+Session 1
+===============================================================================
+
+Row 1 {data-height=150}
+-------------------------------------------------------------------------------
+
+### Total participants {data-width=25%}
+```{r participants}
+participants <- cls_results %>% nrow()
+valueBox(value = participants,icon = "fa-user-plus",caption = "Participants", color = "#FDE725FF")
+```
+
+### Total completers {data-width=25%}
+```{r completers}
+completers <- cls_results %>% filter(progress == 100) %>% nrow()
+valueBox(value = completers,icon = "fa-user-times",caption = "Completers", color = "#22A884FF")
+```
+
+### Net change {data-width=25%}
+```{r net-change}
+participants <- cls_results %>% nrow()
+completers <- cls_results %>% filter(progress == 100) %>% nrow()
+netchange <- (completers-participants)
+#If loop to have either up-arrow or down-arrow icon on valuebox based on the value of netchange
+if(netchange>0){
+  valueBox(value = netchange,icon = "fa-arrow-up",caption = "Net Change", color = "#440154FF")
+} else{
+valueBox(value = netchange,icon = "fa-arrow-down",caption = "Net Change", color = "#440154FF")}
+```
+
+### Participants Attended Similar Event {data-width=25%}
+```{r attend-similar}
+attend_similar <- cls_results %>% filter(similar_event == "Yes") %>% nrow()
+valueBox(value = attend_similar,icon = "fa-user-minus",caption = "Participants Attended Similar Event Past Year", color = "#1F968BFF")
+```
+
+Row 2 {data-height=400}
+--------------------------------------------------------------------------------
+
+### OBJ 1: Articulate reasons leading with a why are important 
+```{r objective-1}
+library(janitor)
+o1 <- cls_results %>% 
+  filter(!is.na(similar_event)) %>%
+  group_by(similar_event, obj_1) %>%
+  tally() %>%
+  mutate(perc = n / sum(n)) %>%
+  #dplyr::select(-n) %>%
+  ungroup() %>%
+  group_by(similar_event) %>%
+  spread(obj_1, perc) %>%
+  clean_names() %>%
+  rowwise() %>%
+  mutate(total_agree = sum(agree, strongly_agree))
+
+p1 <- ggplot(data = o1,
+             mapping = aes(x = similar_event, y = total_agree, fill = total_agree, 
+                           label = scales::percent(total_agree, accuracy = 1L))) +
+  geom_col() +
+  geom_text(nudge_y = -0.5) +
+  scale_color_manual(values = label_col) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_viridis_c(option = "viridis") +
+  labs(y = "Satisfied/Extremely Satisfied", x = "Attended Similar Event") +
+  theme_minimal() +
+  theme(legend.position = "none") + theme(axis.text = element_text(size = 8))
+
+ggplotly(p1)
+```
+
+### OBJ 2: Explain how the history of education has created historical inequities 
+```{r objective-2}
+library(janitor)
+o2 <- cls_results %>% 
+  filter(!is.na(similar_event)) %>%
+           group_by(similar_event, obj_2) %>%
+  tally() %>%
+  mutate(perc = n / sum(n)) %>%
+	dplyr::select(-n) %>%
+  ungroup() %>%
+	group_by(similar_event) %>%
+	spread(obj_2, perc) %>%
+  clean_names() %>%
+  rowwise() %>%
+  mutate(total_agree = sum(agree, strongly_agree))
+
+p2 <- ggplot(data = o2,
+             mapping = aes(x = similar_event, y = total_agree, fill = total_agree, 
+                           label = scales::percent(total_agree, accuracy = 1L))) +
+  geom_col() +
+  geom_text(nudge_y = -0.5) +
+  scale_color_manual(values = label_col) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_viridis_c(option = "viridis") +
+  labs(y = "Satisfied/Extremely Satisfied", x = "Attended Similar Event") +
+  theme_minimal() +
+  theme(legend.position = "none") + theme(axis.text = element_text(size = 8))
+
+ggplotly(p2)
+```
+
+### OBJ 3: Describe how my own implicit biases affect student learning 
+```{r objective-3}
+library(janitor)
+o3 <- cls_results %>% 
+  filter(!is.na(similar_event)) %>%
+           group_by(similar_event, obj_3) %>%
+  tally() %>%
+  mutate(perc = n / sum(n)) %>%
+	dplyr::select(-n) %>%
+  ungroup() %>%
+	group_by(similar_event) %>%
+	spread(obj_3, perc) %>%
+  clean_names() %>%
+  rowwise() %>%
+  mutate(total_agree = sum(agree, strongly_agree))
+
+p3 <- ggplot(data = o3,
+       mapping = aes(x = similar_event, y = total_agree, fill = total_agree, 
+                                 label = scales::percent(total_agree, accuracy = 1L))) +
+  geom_col() +
+  geom_text(nudge_y = -0.5) +
+  scale_color_manual(values = label_col) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_viridis_c(option = "viridis") +
+  labs(y = "Satisfied/Extremely Satisfied", x = "Attended Similar Event") +
+  theme_minimal() +
+  theme(legend.position = "none") + theme(axis.text = element_text(size = 8))
+
+ggplotly(p3)
+
+```
+
+Row 3 {data-height=600}
+---------------------------------------------------------------------------------
+
+### Overall Satisfaction Rate {data-width=25%}
+
+```{r satisfaction}
+library(jsonlite)
+h1 <- cls_results %>% group_by(satisfied) %>% 
+  dplyr::summarise(count=n()) %>%
+  mutate(percentage = (round(count/sum(count), 2))) 
+
+pct_satisfied <- colSums(h1[ , 3, drop = FALSE])
+
+satisfaction_statement <- 
+  "Surveyed participants' level of satisfication is displayed above. The percentage represents the percent of participants who are satisfied or extremely satisfied with the entire day's content. Our goal is to have 80% or higher of participants with a satisfied or extremely satisfied rating"
+  
+enroll_gauge <- gauge(
+  value = 83,
+  min = 0,
+  max = 100,
+  sectors = gaugeSectors(colors = "indigo"),
+  label = "Satisfaction"
+)
+enroll_gauge
+```
+<br><br><br>
+`r satisfaction_statement`
+
+### Baseline Understanding of CLS Content {data-width=75%}
+
+```{r baseline}
+baseline_count <- cls_results %>%
+  select(baseline) %>%
+  group_by(baseline) %>%
+  dplyr::summarise(count=n())
+
+tree <- baseline_count %>%
+  hchart(
+    "treemap",
+    hcaes(x = baseline, value = count, color = count)) %>%
+  hc_colorAxis(stops = color_stops(colors = viridis::plasma(10)))
+tree
+```
+
+Improvement 
+===============================================================================
+
+Column 
+-------------------------------------------------------------------------------
+
+### Total participants 
+```{r responses}
+cls_results_2 <- cls_results %>%
+  select(organization, one_idea, support, enhance, inequity)
+
+m <- highlight_key(cls_results_2)
+
+DT::datatable(m, colnames = c(
+                      'organization', 'one_idea', 'support', 
+                      'enhance', 'inequity'),
+                    extensions = 'Buttons', 
+                    options = list(
+                      dom = 'Bfrtip',
+                      buttons = c('copy', 'csv', 'pdf', 
+                                  'print')))
+```

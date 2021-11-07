@@ -1,0 +1,222 @@
+---
+title: "readme"
+author: "Shannon Coulter"
+date: "Last run: `r format(Sys.time(), '%F')`"
+output: html_document
+---
+
+## TABLE OF CONTENTS
+* DATASET TITLE
+* AUTHORS AND AFFILIATIONS
+* LANGUAGE
+* SUMMARY/ABSTRACT
+* KEYWORDS
+* FILE ORGANIZATION
+* DATASET DESCRIPTION 
+* DATA DICTIONARY
+* DATA ANALYSIS
+* SHARING & ACCESSING INFORMATION
+* ADDITIONAL NOTES/COMMENTS
+
+### DATASET TITLE
+
+The Differentiated Assistance 2015-2019 dataset compiled from administrative datasets located on the California Department of Education website (https://cde.ca.gov)
+
+### AUTHORS AND AFFILIATIONS
+
+* Name: Shannon Coulter
+* Organization/institution: San Diego County Office of Education
+* Email: scoulter@sdcoe.net
+
+### LANGUAGE
+
+* English
+
+### SUMMARY/ABSTRACT
+
+This dataset was developed to determine the effect of differentiated assistance on mathematics and English language arts achievement. LEAs eligible for differentiated assistance have not made adequate progress in reducing performance gaps between student groups. DA eligibility indicates prolonged inequities between and among student groups in local school districts. The objective of assembling this data involves understanding the impact differentiated assistance has on mathematics and English language arts performance across the state of California, specifically the extent to which students whose LEAs receive assistance from County Offices of Education (COEs) benefit in terms of better academic outcomes. Differentiated assistance is a significant investment across the state of California and understanding its effects on reducing performance gaps is a critical priority.  
+
+* Please read the associated openly available research article for context, additional details, and results: 
+
+  * Coulter, S.E. (2021). Does a State Accountability System Emphasizing Continuous Improvement at the LEA Level Impact Mathematics and English Language Arts Achievement? [White paper]. San Diego County Office of Education. https://.
+
+* The repository that accompanies the preprint and dataset is also available at:
+
+  * https://github.com/
+
+### KEYWORDS
+
+accountability; differentiated assistance; ESSA; difference in differences
+
+### FILE ORGANIZATION
+
+* This dataset consists of 1 folder containing XX files:
+  * 1 Readme file 
+  * XX files of figures/tables 
+  * 67 data files 
+  * 4 R script files
+
+* For the initial input data files see script ***assistance_rawimport.Rmd***. 
+
+* Each script is named for its step in the analysis process, with an additional short descriptor. 
+
+* CSV files appended with “plot” are the exact data used for plots in article figures. 
+
+* CSV files appended with “tab” are the exact data used for article tables.
+
+* Files necessary to create Figures
+  * Figure 1 
+  * Figure 2 
+  * Figure 3 
+  * Figure 4 
+  * Figure 5 
+
+* Files necessary to create Tables (in article only)
+  * Table 1: 
+  * Table 2: 
+
+### DATASET DESCRIPTION 
+
+#### Data sources: 
+
+* Initial metadata was obtained through URLs via the California Department of Education's website. 
+* Over 50 administrative datasets were cleaned and combined from the California Department of Education in Testing and Accountability, Finance and Grants, and Data and Statistics. Each dataset can be accessed at https://cde.ca.gov.
+
+#### Data collection dates:
+
+* Database URLs were retrieved from the CDE website between March 19, 2020 – November 22, 2020
+
+### DATA DICTIONARY
+
+#### Variables for final output CSV file, assistance.csv, and then used for the analyses:
+
+* **Year** = the year the demographic and assessment information counts in XXXX format.
+          
+* **Zscore** = the standardized z score (by year, grade, and content area) for each assessment.
+               
+* **Afchg1** = a binary code of 0 or 1 for 2018, 1 year after the policy change.
+
+* **Afchg2** = a binary code of 0 or 1 for 2019, 2 years after policy change.
+
+* **DAassist_p4vAll** = a binary code for LEAs eligible for differentiated assistance for priority 4 (1), or Mathematics or English Language Arts achievement, versus all other LEAs in the dataset (0), which would include LEAs in general assistance and LEAs eligible for differentiated assistance for other priority areas. This comparison is included in the dataset but does not currently have a purpose.
+
+* **DAassist_p4vGen** = a binary code for LEAs eligible for differentiated assistance for priority 4 (1) versus LEAs identified for general assistance (0). The purpose of this comparison is to determine the effect of LEAs receiving assistance for priority 4 (i.e., academic performance) versus LEAs not receiving assistance. THis comparison represents the difference between a treatment turned on for a subset of LEAs and turned off for others.
+
+* **DAassist_p4vDAother** = a binary code for LEAs eligible for differentiated assistance for priority 4 (1) versus LEAs eligible for differentiated assistance for other priority areas such as student engagement (0). The purpose of this comparison is to determine the effect of receiving assistance for priority 4 versus assistance for other priority areas. This comparison represents two groups getting the same treatment, where the treatment is turned on for both groups.
+
+* **DAassist_DAvGen** = a binary code for LEAs eligible for differentiated assistance including all priority areas (1) versus LEAs identified as general assistance. The purpose of this comparison is to determine the effect of assistance versus no assistance. This comparison represents the treatment being turned on for all and turned off for everyone else.
+                 
+* **Enrl** = the count of students enrolled in the LEA for years 2015-2019.   
+     
+* **l_Enrl** = the log count of students enrolled in the LEA for years 2015-2019. Enrollment is transformed so that it shares a more similar scale to other variables.
+
+* **FRPM_shr** = the proportion of students who receive a free or reduced priced lunch.
+
+* **EL_shr** = the proportion of students identified as an English Learner.
+
+* **SDI_prop** = a demographic index score on a 0 to 1 scale. The School Demographic Index is a score that reflects the level of diversity in an LEA. The index is calculated by determining the proportion of each of the 8 major race/ethnicity subgroups in an LEA. An LEA with 100% of one subgroup would have a score closer to 0. An LEA with a score closer to 100 would have an equal distribution of all 8 subgroups. This index provides a sense of how diverse an LEA is and also allows for comparisons between similar LEAs in terms of diversity. Diversity, however, does not account for program participation, which can also be an important factor in the conditions of schooling. Program participation is captured by free and reduced lunch proportions and proportions of English Learners.
+
+* **Masters_shr** = a proportion of teachers with masters degrees in the LEA.
+
+* **Avg_teach** = the average years of teaching experience in the LEA.
+
+* **ADA** = a proportion that represents the average daily attendance rate in an LEA. A .96 indicates that 96% of students attend school in the LEA daily.
+
+* **Revenue** = the annual revenue of the LEA.
+
+* **l_Revenue** = the log of annual revenue of the LEA. The log is calculated to standardize variable scales.
+
+* **StudentsTested** = the count of students tested in the LEA.
+
+* **l_StudentsTested** = the log count of students tested in the LEA.
+
+* **CAASPPEnrollment** = the count of the students enrolled in testing in the LEA. This number reflects the number of students who should have tested. The difference between this number and StudentsTested reflects how many students opted out of state testing.
+
+* **l_CAASPPEnrollment** = the log count of the students enrolled in testing in the LEA.
+
+* **Grade** = the grade level indicator of students for the particular assessment. 
+
+* **MScaleScore** = the scale score for the particular assessment and grade level.
+
+* **TestId** = a content area indicator either Math or ELA.
+
+* **NCESDist** = the alphanumeric federal identifier of the LEA.
+
+* **District** = the name of the LEA.
+      
+* **DOCType** = a label identifying the type of LEA (e.g., Unified School District).
+      
+* **Latitude** = the north-south coordinates of the LEA.
+           
+* **Longitude** = the east-west coordinates of the LEA.
+
+### DATA ANALYSIS
+
+#### Program used:
+* R version R version 4.0.3 (2020-10-10)
+* RStudio 1.3.1093
+* Platform: x86_64-w64-mingw32 (64-bit)
+* Running under: Windows 10
+* Attached base packages:
+  * stats
+  * graphics
+  * devices
+  * utils
+  * datasets 
+  * methods
+  * base     
+* Other attached packages:
+  * dplyr
+  * purrr
+  * readxl
+  * tidyr
+  * ggplot2 
+  * tidyverse
+  * stringr
+  * lubridate
+  * stringr
+  * stringi
+  * knitr
+  * magrittr
+
+#### There are 8 scripts that work sequentially:
+
+**assistance_rawdownload.Rmd** Purpose: Loop through and download each of the data files associated with final ***assistance.csv***.
+
+  * Package(s): knitr, dplyr, lubridate, here, purr, tidyverse, readxl, stringr, stringi, magrittr
+  
+  * Input file(s): lcff_assistance.csv, lcff_assistance.xlsx, LCFF_Prority4.xlsx, public_schools.txt, Revenue1415.txt, sacs1415.mdb, sacs1516.mdb, sacs11617.mdb, sacs1718.mdb, sacs1819.mdb, sb_ca2015_all_csv_v3.txt, sb_ca2016_all_csv_v3.txt, sb_ca2017_all_csv_v3.txt, sb_ca2018_all_csv_v3.txt, sb_ca2019_all_csv_v3.txt, sb_ca2015entities_csv.txt, sb_ca2016entities_csv.txt, sb_ca2017entities_csv.txt, sb_ca2018entities_csv.txt, sb_ca2019entities_csv.txt, sch_demo_1617.txt, sch_demo_1718.txt, sch_demo_1819.txt, sch_el_1516.txt, sch_el_1617.txt, sch_el_1718.txt, sch_el_1819.txt, StaffDemo14.txt, StaffDemo14.txt, StaffDemo15.txt, StaffDemo16.txt, StaffDemo17.txt, StaffDemo18.txt, stu_ada_1415, stu_ada_1516, stu_ada_1617, stu_ada_1718, stu_ada_1819, stu_foster_1415, stu_foster_1516, stu_foster_1617, stu_foster_1718, stu_foster_1819, stu_poverty_1415, stu_poverty_1516, stu_poverty_1617, stu_poverty_1718, stu_poverty_1819, UserGL1415.txt, UserGL1516.txt, UserGL1617.txt, UserGL1718.txt, UserGL1819.txt,
+   
+   * Output file(s): ada.csv, demo.csv, el.csv, entity.csv, foster.csv, lcff.csv, pov.csv, pri4.csv, pschool.csv, sacs.csv, sbac.csv, SDI.csv, stdem.csv
+
+**assistance_rawimport.Rmd** Purpose: Import the combined datasets and merge into one master file.
+
+  * Package(s): knitr, dplyr, lubridate, here, purr, tidyverse, readxl, stringr, stringi, magrittr
+  
+  * Input file(s): ada.csv, demo.csv, el.csv, entity.csv, foster.csv, lcff.csv, pov.csv, pri4.csv, pschool.csv, sacs.csv, sbac.csv, SDI.csv, stdem.csv
+  
+  * Output file(s): did.csv, daimpact.csv
+
+**assistance_cleaning.Rmd** Purpose: Explore and further clean the ***did.csv*** dataset. 
+   * Package(s): knitr, dplyr, ggplot, readr, tidyverse
+   * Input file(s): did.csv
+   * Output file(s): did.csv, assistance_eda.pdf
+
+**assistance_diffndiff.Rmd** Purpose: Execute differences in differences to test for effects on student achievement after the accountability policy change establishing differentiated assistance. Ref for diff-n-diff: Gertler, P. (2016) ***Impact Evaluation in Practice***; Angrist, J. (2015) ***Mastering Metrics***; Cunningham, S. (2018) ***Causal Inference: The Mixtape***.
+
+  * Package(s): knitr, VIM, tidyverse, ggplot2
+  
+  * Input file(s): did.csv
+  
+  * Output file(s): assistance.csv, Figure_xx, table_xx, 
+
+### SHARING & ACCESSING INFORMATION
+
+* **Formally:** Creative Commons Open Source (CC0) to facilitate ease-of-use
+* **Informally:** The citation is:
+
+     * Coulter, S.E. (2021). Does a State Accountability System Emphasizing Continuous Improvement at the LEA Level Impact Mathematics and English Language Arts Achievement? [White paper]. San Diego County Office of Education. https://.
+
+### ADDITIONAL NOTES/COMMENTS
+
+Please let me know if any errors in the dataset are found. 
